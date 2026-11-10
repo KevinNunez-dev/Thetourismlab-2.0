@@ -1,0 +1,17 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { formatDate, getPosts, imageFor, plainText } from '../../lib/wordpress';
+import type { GetStaticPaths } from 'astro';
+export const getStaticPaths = (async () => (await getPosts()).map((post) => ({ params: { slug: post.slug }, props: { post } }))) satisfies GetStaticPaths;
+const { post } = Astro.props;
+const image = imageFor(post);
+const title = plainText(post.title.rendered);
+---
+<Layout title={title} description={plainText(post.excerpt.rendered).slice(0, 160)}>
+  <article class="story-page">
+    <div class="wrap story-header"><a class="text-link" href="/editorial-series/">← Explore stories</a><p class="eyebrow">THE TOURISM LAB &nbsp; / &nbsp; STORIES</p><h1>{title}</h1><p class="byline">{post._embedded?.author?.[0]?.name || 'The Tourism Lab'} <span>·</span> <time datetime={post.date.slice(0, 10)}>{formatDate(post.date)}</time></p></div>
+    {image?.source_url && <div class="wrap story-cover"><img src={image.source_url} alt={image.alt_text || ''} /></div>}
+    <div class="article-content" set:html={post.content.rendered} />
+    <div class="article-end"><a class="text-link" href="/industry-news/">More industry news ↗</a></div>
+  </article>
+</Layout>

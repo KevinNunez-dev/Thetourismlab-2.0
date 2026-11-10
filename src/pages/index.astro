@@ -1,0 +1,58 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { getPosts, inCategories, editorialCategory, imageFor, topics } from '../lib/wordpress';
+const posts = await getPosts();
+const editorial = inCategories(posts, [editorialCategory]);
+const heroImage = imageFor(editorial[0] || posts[0])?.source_url;
+---
+<Layout>
+  <section class="home-hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow light"><span class="eyebrow-line"></span> THE TOURISM LAB</p>
+        <h1>We connect<br />the dots <em>for you.</em></h1>
+        <p class="hero-intro">Industry stories, expert perspectives, and ideas moving tourism forward.</p>
+        <a class="text-link text-link-light" href="/editorial-series/">Explore the stories <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="hero-visual">
+        {heroImage && <img src={heroImage} alt="" fetchpriority="high" />}
+        <div class="hero-image-caption"><span>THE WORLD OF TOURISM</span><span>01 — 05</span></div>
+      </div>
+    </div>
+    <div class="wrap hero-bottom"><span>INSIGHTS &nbsp; / &nbsp; IDEAS &nbsp; / &nbsp; CONNECTIONS</span><span>SCROLL TO EXPLORE ↓</span></div>
+  </section>
+
+  <section class="intro-section section-pad">
+    <div class="wrap intro-grid">
+      <div><p class="eyebrow">ABOUT THE LAB</p><h2>Where tourism<br /><em>thinks forward.</em></h2></div>
+      <div class="intro-copy"><p class="lead">The stories, trends and ideas shaping the future of tourism.</p><p>An editorial platform exploring the people, developments and perspectives driving the tourism industry forward.</p><a class="text-link" href="/the-tourism-lab/">Get to know us <span aria-hidden="true">↗</span></a></div>
+    </div>
+  </section>
+
+  <section class="focus-section section-pad">
+    <div class="wrap">
+      <div class="section-heading on-dark"><div><p class="eyebrow light">WHERE WE FOCUS</p><h2>Explore the <em>industry.</em></h2></div><p>Perspectives from across the tourism ecosystem, all in one place.</p></div>
+      <div class="focus-list">
+        {topics.map((topic, index) => <a href={`/industry-news/${topic.slug}/`}><span class="focus-number">0{index + 1}</span><span>{topic.name}</span><span class="focus-arrow" aria-hidden="true">↗</span></a>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section-pad stories-section">
+    <div class="wrap">
+      <div class="section-heading"><div><p class="eyebrow">THE LATEST PERSPECTIVES</p><h2>Editorial <em>series.</em></h2></div><a class="text-link" href="/editorial-series/">View all stories <span aria-hidden="true">↗</span></a></div>
+      <div class="card-grid">{editorial.slice(0, 3).map((post) => <ArticleCard post={post} label="Editorial series" />)}</div>
+    </div>
+  </section>
+
+  {topics.map((topic, index) => {
+    const stories = inCategories(posts, topic.categories).slice(0, 3);
+    return stories.length > 0 && <section class:list={['topic-section', 'section-pad', { 'section-tinted': index % 2 === 0 }]}>
+      <div class="wrap">
+        <div class="section-heading"><div><p class="eyebrow">INDUSTRY NEWS &nbsp; / &nbsp; 0{index + 1}</p><h2>{topic.name}<span class="accent-dot">.</span></h2></div><a class="text-link" href={`/industry-news/${topic.slug}/`}>View all <span aria-hidden="true">↗</span></a></div>
+        <div class="card-grid">{stories.map((post) => <ArticleCard post={post} label={topic.name} />)}</div>
+      </div>
+    </section>;
+  })}
+</Layout>

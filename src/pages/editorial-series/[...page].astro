@@ -1,0 +1,22 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { editorialCategory, getPosts, inCategories } from '../../lib/wordpress';
+import type { GetStaticPaths } from 'astro';
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = inCategories(await getPosts(), [editorialCategory]);
+  return paginate(posts, { pageSize: 12 });
+}) satisfies GetStaticPaths;
+const { page } = Astro.props;
+---
+<Layout title="Editorial Series" description="Analysis and perspectives from the people shaping cruises, ports, destinations and travel.">
+  <PageHero eyebrow="HOME / EDITORIAL SERIES" title="Editorial Series" description="Analysis and perspectives from the people shaping cruises, ports, destinations and travel." />
+  <section class="section-pad"><div class="wrap">
+    <div class="section-heading"><div><p class="eyebrow">LATEST STORIES</p><h2>Perspectives that <em>move us.</em></h2></div><p>Our editorial series gives context to the conversations moving the global tourism ecosystem.</p></div>
+    <div class="card-grid">{page.data.map((post) => <ArticleCard post={post} label="Editorial series" />)}</div>
+    <nav class="pagination" aria-label="Editorial pages">
+      {page.url.prev && <a href={page.url.prev}>← Previous</a>}<span>Page {page.currentPage} of {page.lastPage}</span>{page.url.next && <a href={page.url.next}>Next →</a>}
+    </nav>
+  </div></section>
+</Layout>

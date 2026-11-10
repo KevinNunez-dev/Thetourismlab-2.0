@@ -1,0 +1,16 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { getPosts, inCategories, topics } from '../../lib/wordpress';
+const posts = inCategories(await getPosts(), [59]);
+---
+<Layout title="Industry News">
+  <PageHero eyebrow="HOME / INDUSTRY NEWS" title="Industry News" description="The latest developments and conversations from across the global tourism industry." />
+  <section class="section-pad"><div class="wrap">
+    <div class="section-heading"><div><p class="eyebrow">EXPLORE BY SUBJECT</p><h2>Find your <em>focus.</em></h2></div></div>
+    <div class="topic-links">{topics.map((topic) => <a href={`/industry-news/${topic.slug}/`}>{topic.name} <span aria-hidden="true">↗</span></a>)}</div>
+    <div class="section-heading news-heading"><div><p class="eyebrow">THE LATEST</p><h2>News worth <em>knowing.</em></h2></div></div>
+    <div class="card-grid">{posts.slice(0, 12).map((post) => <ArticleCard post={post} />)}</div>
+  </div></section>
+</Layout>

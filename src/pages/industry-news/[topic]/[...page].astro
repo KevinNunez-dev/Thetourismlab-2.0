@@ -1,0 +1,23 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import ArticleCard from '../../../components/ArticleCard.astro';
+import { getPosts, inCategories, topics } from '../../../lib/wordpress';
+import type { GetStaticPaths } from 'astro';
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getPosts();
+  return topics.flatMap((topic) => paginate(inCategories(posts, topic.categories), { params: { topic: topic.slug }, props: { topic }, pageSize: 12 }));
+}) satisfies GetStaticPaths;
+const { page, topic } = Astro.props;
+---
+<Layout title={topic.name} description={topic.description}>
+  <PageHero eyebrow="HOME / INDUSTRY NEWS" title={topic.name} description={topic.description} />
+  <section class="section-pad"><div class="wrap">
+    <div class="section-heading"><div><p class="eyebrow">INDUSTRY NEWS</p><h2>The latest from <em>{topic.name.toLowerCase()}.</em></h2></div><p>{topic.description}</p></div>
+    <div class="topic-links compact"><a href="/industry-news/">All news ↗</a>{topics.map((item) => <a href={`/industry-news/${item.slug}/`} aria-current={item.slug === topic.slug ? 'page' : undefined}>{item.name}</a>)}</div>
+    {page.data.length ? <div class="card-grid">{page.data.map((post) => <ArticleCard post={post} label={topic.name} />)}</div> : <p>No stories have been published in this category yet.</p>}
+    <nav class="pagination" aria-label={`${topic.name} pages`}>
+      {page.url.prev && <a href={page.url.prev}>← Previous</a>}<span>Page {page.currentPage} of {page.lastPage}</span>{page.url.next && <a href={page.url.next}>Next →</a>}
+    </nav>
+  </div></section>
+</Layout>

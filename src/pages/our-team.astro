@@ -1,0 +1,17 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+const team = [
+  ['Andrea Baigorria', 'Founder & CEO'],
+  ['Laura González', 'Director of Business Development'],
+  ['Marité Zapater', 'Chief of Staff'],
+  ['Luz Marina Espiau', 'Editorial Contributor'],
+  ['Gabriel Pinto', 'Editorial Contributor'],
+  ['Mario Špadina', 'Editorial Contributor'],
+];
+---
+<Layout title="Our Team">
+  <PageHero eyebrow="HOME / OUR TEAM" title="Our Team" description="Strategy, storytelling, business development, and tourism expertise — all in one team." />
+  <section class="section-pad"><div class="wrap split-content"><div><p class="eyebrow">OUR FOUNDER</p><h2>One team, many <em>perspectives.</em></h2></div><div class="prose"><p class="lead">Andrea Baigorria, Founder & CEO</p><p>Andrea is an executive and entrepreneur with experience in communications, strategic marketing, and business development across the travel, tourism, and hospitality sectors. She helps tourism brands translate complex ecosystems into clear strategies that attract the right travelers and partners.</p></div></div></section>
+  <section class="section-pad section-tinted"><div class="wrap"><div class="section-heading"><div><p class="eyebrow">MEET THE PEOPLE BEHIND THE LAB</p><h2>Better <em>together.</em></h2></div></div><div class="team-grid">{team.map(([name, role], i) => <div class="team-card"><span class="eyebrow">0{i + 1} / THE TOURISM LAB</span><h3>{name}</h3><p>{role}</p></div>)}</div></div></section>
+</Layout>

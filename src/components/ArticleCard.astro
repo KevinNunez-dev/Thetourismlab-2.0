@@ -1,0 +1,16 @@
+---
+import { formatDate, imageFor, plainText, type WordPressPost } from '../lib/wordpress';
+interface Props { post: WordPressPost; label?: string; }
+const { post, label = 'Industry news' } = Astro.props;
+const image = imageFor(post);
+---
+<article class="article-card">
+  <a class="card-image" href={`/stories/${post.slug}/`} tabindex="-1" aria-hidden="true">
+    {image?.source_url ? <img src={image.source_url} alt="" loading="lazy" /> : <span class="image-placeholder">THE TOURISM LAB</span>}
+  </a>
+  <div class="card-body">
+    <p class="tag">{label}</p>
+    <h3><a href={`/stories/${post.slug}/`}>{plainText(post.title.rendered)}</a></h3>
+    <p class="byline">{post._embedded?.author?.[0]?.name || 'The Tourism Lab'} <span>·</span> <time datetime={post.date.slice(0, 10)}>{formatDate(post.date)}</time></p>
+  </div>
+</article>

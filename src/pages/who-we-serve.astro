@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+const audiences = [
+  ['Cruise lines', 'Strategic storytelling and meaningful collaborations that elevate visibility and long-term impact.'],
+  ['Ports and destinations', 'Marketing and communication strategy that fosters partnerships and creates new opportunities.'],
+  ['Destinations & tourism boards', 'Turning destinations into inspiring stories that build visibility, credibility, and sustainable opportunities.'],
+  ['Travel & hospitality brands', 'Connecting brands with stakeholders, partners, and audiences through authentic stories and experiences.'],
+  ['Industry executives', 'Helping leaders share their vision, strengthen their network, and grow their professional influence.'],
+  ['Organizations & associations', 'Amplifying missions through communication that builds reputation, engagement, and sector influence.'],
+];
+const services = ['Strategic positioning & business development', 'Marketing, communication & storytelling', 'Matchmaking with the industry', 'Partnerships, events & experiences'];
+---
+<Layout title="Who We Serve">
+  <PageHero eyebrow="HOME / WHO WE SERVE" title="Who We Serve" description="The key players shaping the future of tourism — and the strategy, visibility and relationships they need to grow." />
+  <section class="section-pad"><div class="wrap"><div class="section-heading"><div><p class="eyebrow">WHO WE SERVE</p><h2>Partners of the <em>tourism ecosystem.</em></h2></div><p>From cruise lines to hospitality brands and public-private alliances, we support those seeking meaningful growth.</p></div><div class="audience-grid">{audiences.map(([title, description], i) => <div class="audience-card"><span class="eyebrow">0{i + 1}</span><h3>{title}</h3><p>{description}</p></div>)}</div></div></section>
+  <section class="focus-section section-pad"><div class="wrap"><div class="section-heading on-dark"><div><p class="eyebrow light">WHAT WE DO</p><h2>Clarity, purpose, <em>impact.</em></h2></div><p>Strategic support for the people moving tourism forward.</p></div><div class="focus-list">{services.map((service, i) => <div class="focus-row"><span class="focus-number">0{i + 1}</span><span>{service}</span></div>)}</div></div></section>
+</Layout>
