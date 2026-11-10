@@ -1,0 +1,22 @@
+---
+import NewsListing from '../../../../../components/NewsListing.astro';
+import { getPosts, inCategories, topics } from '../../../../../lib/wordpress';
+import { newsPeriods } from '../../../../../lib/news-listing';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getPosts();
+  return topics.flatMap((topic) => {
+    const allPosts = inCategories(posts, topic.categories);
+    return newsPeriods(topic, allPosts).flatMap(({ value }) =>
+      paginate(allPosts.filter((post) => post.date.startsWith(value)), {
+        params: { topic: topic.slug, period: value },
+        props: { topic, allPosts, activePeriod: value },
+        pageSize: 10,
+      }),
+    );
+  });
+}) satisfies GetStaticPaths;
+const { page, topic, allPosts, activePeriod } = Astro.props;
+---
+<NewsListing page={page} topic={topic} allPosts={allPosts} activePeriod={activePeriod} />
