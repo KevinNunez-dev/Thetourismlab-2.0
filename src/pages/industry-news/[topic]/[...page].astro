@@ -2,20 +2,25 @@
 import Layout from '../../../layouts/Layout.astro';
 import PageHero from '../../../components/PageHero.astro';
 import ArticleCard from '../../../components/ArticleCard.astro';
-import { getPosts, inCategories, topics } from '../../../lib/wordpress';
+import FeaturedStory from '../../../components/FeaturedStory.astro';
+import { formatDate, getPosts, inCategories, topics } from '../../../lib/wordpress';
+import { assets } from '../../../lib/assets';
 import type { GetStaticPaths } from 'astro';
 export const getStaticPaths = (async ({ paginate }) => {
   const posts = await getPosts();
-  return topics.flatMap((topic) => paginate(inCategories(posts, topic.categories), { params: { topic: topic.slug }, props: { topic }, pageSize: 12 }));
+  return topics.flatMap((topic) => paginate(inCategories(posts, topic.categories), { params: { topic: topic.slug }, props: { topic }, pageSize: 10 }));
 }) satisfies GetStaticPaths;
 const { page, topic } = Astro.props;
+const images: Record<string, string> = { 'cruise-lines': assets.ship, 'ports-and-destinations': '/images/hero-port.webp', 'travel-and-tourism': '/images/hero-travel.webp', sustainability: '/images/hero-sustainability.webp', associations: assets.hero };
 ---
 <Layout title={topic.name} description={topic.description}>
-  <PageHero eyebrow="HOME / INDUSTRY NEWS" title={topic.name} description={topic.description} />
-  <section class="section-pad"><div class="wrap">
-    <div class="section-heading"><div><p class="eyebrow">INDUSTRY NEWS</p><h2>The latest from <em>{topic.name.toLowerCase()}.</em></h2></div><p>{topic.description}</p></div>
-    <div class="topic-links compact"><a href="/industry-news/">All news ↗</a>{topics.map((item) => <a href={`/industry-news/${item.slug}/`} aria-current={item.slug === topic.slug ? 'page' : undefined}>{item.name}</a>)}</div>
-    {page.data.length ? <div class="card-grid">{page.data.map((post) => <ArticleCard post={post} label={topic.name} />)}</div> : <p>No stories have been published in this category yet.</p>}
+  <PageHero eyebrow={`HOME / INDUSTRY NEWS / ${topic.name}`} title={topic.name} description={topic.description} image={images[topic.slug]} stats={[{ value: String(page.total), label: 'STORIES' }, ...(page.data[0] ? [{ value: formatDate(page.data[0].date), label: 'LATEST ON THIS PAGE' }] : [])]} />
+  <section class="listing-intro"><div class="wrap listing-intro-grid">
+    <div><p class="eyebrow">INDUSTRY NEWS</p><h2>News from <em>{topic.name.toLowerCase()}</em></h2></div>
+    <div><p>{topic.description}</p><div class="topic-links compact"><a href="/industry-news/">All news</a>{topics.map((item) => <a href={`/industry-news/${item.slug}/`} aria-current={item.slug === topic.slug ? 'page' : undefined}>{item.name}</a>)}</div></div>
+  </div></section>
+  <section class="section-pad section-tinted"><div class="wrap">
+    {page.data[0] ? <><FeaturedStory post={page.data[0]} label={topic.name} /><div class="more-heading"><h2>More {topic.name.toLowerCase()} news</h2><span>{Math.max(page.data.length - 1, 0)} stories</span></div><div class="card-grid">{page.data.slice(1).map((post) => <ArticleCard post={post} label={topic.name} />)}</div></> : <p>No stories have been published in this category yet.</p>}
     <nav class="pagination" aria-label={`${topic.name} pages`}>
       {page.url.prev && <a href={page.url.prev}>← Previous</a>}<span>Page {page.currentPage} of {page.lastPage}</span>{page.url.next && <a href={page.url.next}>Next →</a>}
     </nav>

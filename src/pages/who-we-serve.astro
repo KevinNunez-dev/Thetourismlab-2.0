@@ -1,18 +1,20 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
+import { assets } from '../lib/assets';
 const audiences = [
-  ['Cruise lines', 'Strategic storytelling and meaningful collaborations that elevate visibility and long-term impact.'],
-  ['Ports and destinations', 'Marketing and communication strategy that fosters partnerships and creates new opportunities.'],
-  ['Destinations & tourism boards', 'Turning destinations into inspiring stories that build visibility, credibility, and sustainable opportunities.'],
-  ['Travel & hospitality brands', 'Connecting brands with stakeholders, partners, and audiences through authentic stories and experiences.'],
-  ['Industry executives', 'Helping leaders share their vision, strengthen their network, and grow their professional influence.'],
-  ['Organizations & associations', 'Amplifying missions through communication that builds reputation, engagement, and sector influence.'],
+  ['Cruise lines', 'Strategic storytelling and meaningful collaborations that elevate visibility and long-term impact.', '/images/audience-cruise.webp'],
+  ['Ports and destinations', 'Marketing and communication strategy that fosters partnerships and creates new opportunities.', '/images/audience-port.webp'],
+  ['Destinations & tourism boards', 'Turning destinations into inspiring stories that build visibility, credibility, and sustainable opportunities.', '/images/audience-destination.webp'],
+  ['Travel & hospitality brands', 'Connecting brands with stakeholders, partners, and audiences through authentic stories and experiences.', '/images/audience-hospitality.webp'],
+  ['Industry executives', 'Helping leaders share their vision, strengthen their network, and grow their professional influence.', '/images/audience-executives.webp'],
+  ['Organizations & associations', 'Amplifying missions through communication that builds reputation, engagement, and sector influence.', '/images/audience-associations.webp'],
 ];
 const services = ['Strategic positioning & business development', 'Marketing, communication & storytelling', 'Matchmaking with the industry', 'Partnerships, events & experiences'];
 ---
 <Layout title="Who We Serve">
-  <PageHero eyebrow="HOME / WHO WE SERVE" title="Who We Serve" description="The key players shaping the future of tourism — and the strategy, visibility and relationships they need to grow." />
-  <section class="section-pad"><div class="wrap"><div class="section-heading"><div><p class="eyebrow">WHO WE SERVE</p><h2>Partners of the <em>tourism ecosystem.</em></h2></div><p>From cruise lines to hospitality brands and public-private alliances, we support those seeking meaningful growth.</p></div><div class="audience-grid">{audiences.map(([title, description], i) => <div class="audience-card"><span class="eyebrow">0{i + 1}</span><h3>{title}</h3><p>{description}</p></div>)}</div></div></section>
-  <section class="focus-section section-pad"><div class="wrap"><div class="section-heading on-dark"><div><p class="eyebrow light">WHAT WE DO</p><h2>Clarity, purpose, <em>impact.</em></h2></div><p>Strategic support for the people moving tourism forward.</p></div><div class="focus-list">{services.map((service, i) => <div class="focus-row"><span class="focus-number">0{i + 1}</span><span>{service}</span></div>)}</div></div></section>
+  <PageHero eyebrow="HOME / WHO WE SERVE" title="Who We Serve" description="The key players shaping the future of tourism — and the strategy, visibility and relationships they need to grow." image={assets.ship} stats={[{value:'6',label:'AUDIENCES'},{value:'4',label:'SERVICES'}]} />
+  <section class="listing-intro"><div class="wrap listing-intro-grid"><div><p class="eyebrow">WHO WE SERVE</p><h2>Partners of <em>the tourism ecosystem</em></h2></div><p class="lead">From cruise lines to hospitality brands and public-private alliances, we support those who seek strategic direction, stronger visibility, and meaningful relationships.</p></div></section>
+  <section class="section-pad section-tinted"><div class="wrap"><div class="audience-grid">{audiences.map(([title, description, image]) => <article class="audience-card"><img src={image} alt="" loading="lazy" /><p class="tag">Who we serve</p><h3>{title}</h3><p>{description}</p></article>)}</div></div></section>
+  <section class="focus-section section-pad services-section" style={`--map-image: url("${assets.map}")`}><div class="wrap"><div class="section-heading on-dark"><div><p class="eyebrow light">WHAT WE DO</p><h2>We help destinations,<br />brands, and tourism<br />organizations grow with<br /><em>clarity, purpose, and impact</em></h2></div></div><div class="services-grid">{services.map((service, i) => <div><span>0{i + 1}</span><h3>{service}</h3></div>)}</div></div></section>
 </Layout>

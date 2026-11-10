@@ -1,17 +1,32 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
-const team = [
-  ['Andrea Baigorria', 'Founder & CEO'],
-  ['Laura González', 'Director of Business Development'],
-  ['Marité Zapater', 'Chief of Staff'],
-  ['Luz Marina Espiau', 'Editorial Contributor'],
-  ['Gabriel Pinto', 'Editorial Contributor'],
-  ['Mario Špadina', 'Editorial Contributor'],
+import { assets } from '../lib/assets';
+const core = [
+  { name: 'Laura González', role: 'Director of Business Development', image: assets.laura },
+  { name: 'Marité Zapater', role: 'Chief of Staff', image: assets.marite },
+];
+const contributors = [
+  { name: 'Luz Marina Espiau', role: 'Editorial Contributor', image: assets.luz },
+  { name: 'Gabriel Pinto', role: 'Editorial Contributor', image: assets.gabriel },
+  { name: 'Mario Špadina', role: 'Editorial Contributor', image: assets.mario },
 ];
 ---
 <Layout title="Our Team">
-  <PageHero eyebrow="HOME / OUR TEAM" title="Our Team" description="Strategy, storytelling, business development, and tourism expertise — all in one team." />
-  <section class="section-pad"><div class="wrap split-content"><div><p class="eyebrow">OUR FOUNDER</p><h2>One team, many <em>perspectives.</em></h2></div><div class="prose"><p class="lead">Andrea Baigorria, Founder & CEO</p><p>Andrea is an executive and entrepreneur with experience in communications, strategic marketing, and business development across the travel, tourism, and hospitality sectors. She helps tourism brands translate complex ecosystems into clear strategies that attract the right travelers and partners.</p></div></div></section>
-  <section class="section-pad section-tinted"><div class="wrap"><div class="section-heading"><div><p class="eyebrow">MEET THE PEOPLE BEHIND THE LAB</p><h2>Better <em>together.</em></h2></div></div><div class="team-grid">{team.map(([name, role], i) => <div class="team-card"><span class="eyebrow">0{i + 1} / THE TOURISM LAB</span><h3>{name}</h3><p>{role}</p></div>)}</div></div></section>
+  <PageHero eyebrow="HOME / OUR TEAM" title="Our Team" description="Strategy, storytelling, business development, and tourism expertise — all in one team." image={assets.ocean} stats={[{value:'6',label:'PEOPLE'},{value:'Miami',label:'HEADQUARTERS'}]} />
+  <section class="image-split founder-split">
+    <img src={assets.founder} alt="Andrea Baigorria" />
+    <div class="image-split-copy"><p class="eyebrow">OUR FOUNDER</p><h2>Andrea <em>Baigorria</em></h2><p class="eyebrow">FOUNDER & CEO</p>
+      <p>Andrea Baigorria is an executive and entrepreneur with over 15 years of experience in communications, strategic marketing, and business development across the travel, tourism, and hospitality sectors.</p>
+      <p>Currently based in Miami, Florida, she is the Founder and CEO of The Tourism Lab, as well as the CEO of The Hospitality Studio, a platform focused on hospitality and experiences with a strategic lens on innovation, sustainability, and the development of the tourism ecosystem.</p>
+      <p>Throughout her career, Andrea has led communication and positioning strategies for cruise lines, airlines, ports, destinations, and hospitality groups, helping enhance their international visibility and promote sustainable tourism.</p>
+    </div>
+  </section>
+  <section class="section-pad section-tinted"><div class="wrap">
+    <div class="section-heading"><div><p class="eyebrow">MEET THE PEOPLE BEHIND THE TOURISM LAB</p><h2>One team, <em>many perspectives</em></h2></div><p>Strategy, storytelling, business development, and tourism expertise — all in one team focused on helping brands grow with clarity and purpose.</p></div>
+    <div class="team-label"><span>CORE TEAM</span><span>02</span></div>
+    <div class="portrait-grid">{core.map((person) => <article><img src={person.image} alt={person.name} loading="lazy" /><p class="tag">Core team</p><h3>{person.name}</h3><p>{person.role}</p></article>)}</div>
+    <div class="team-label"><span>EDITORIAL CONTRIBUTORS</span><span>03</span></div>
+    <div class="portrait-grid">{contributors.map((person) => <article><img src={person.image} alt={person.name} loading="lazy" /><p class="tag">Editorial series</p><h3>{person.name}</h3><p>{person.role}</p></article>)}</div>
+  </div></section>
 </Layout>

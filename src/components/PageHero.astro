@@ -1,10 +1,13 @@
 ---
-interface Props { eyebrow: string; title: string; description: string; }
-const { eyebrow, title, description } = Astro.props;
+import { assets } from '../lib/assets';
+interface Props { eyebrow: string; title: string; description: string; stats?: { value: string; label: string }[]; image?: string; }
+const { eyebrow, title, description, stats = [], image = assets.hero } = Astro.props;
+const words = title.split(' ');
+const last = words.pop();
 ---
-<section class="page-hero">
+<section class="page-hero" style={`--hero-image: url("${image}")`}>
   <div class="wrap page-hero-inner">
-    <div><p class="eyebrow light">{eyebrow}</p><h1>{title}<span class="accent-dot">.</span></h1></div>
-    <p class="page-hero-description">{description}</p>
+    <div><p class="eyebrow light">{eyebrow}</p><h1>{words.length ? <>{words.join(' ')}<br /><em>{last}</em></> : title}</h1></div>
+    <div><p class="page-hero-description">{description}</p>{stats.length > 0 && <div class="hero-stats">{stats.map((stat) => <div><strong>{stat.value}</strong><span>{stat.label}</span></div>)}</div>}</div>
   </div>
 </section>

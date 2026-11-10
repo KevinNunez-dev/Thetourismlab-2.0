@@ -1,0 +1,8 @@
+---
+import { topics } from '../lib/wordpress';
+const { active = 'all' } = Astro.props;
+---
+<nav class="topic-links compact editorial-filters" aria-label="Filter editorial series by area">
+  <a href="/editorial-series/" aria-current={active === 'all' ? 'page' : undefined}>All</a>
+  {topics.filter((topic) => topic.editorialCategories).map((topic) => <a href={`/editorial-series/area/${topic.slug}/`} aria-current={active === topic.slug ? 'page' : undefined}>{topic.name}</a>)}
+</nav>

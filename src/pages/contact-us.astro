@@ -2,10 +2,31 @@
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
 ---
-<Layout title="Contact Us">
-  <PageHero eyebrow="HOME / CONTACT US" title="Contact Us" description="Tell us about your goals — we'd love to start the conversation." />
-  <section class="section-pad"><div class="wrap split-content">
-    <div><p class="eyebrow">GET IN TOUCH</p><h2>Let's connect the <em>dots together.</em></h2><p class="lead">We'd love to hear how we can support your goals and create meaningful progress in tourism and hospitality.</p></div>
-    <div class="contact-details"><div><p class="eyebrow">HEADQUARTERS</p><p>Miami, Florida</p></div><div><p class="eyebrow">EMAIL</p><a href="mailto:info@thetourismlab.com">info@thetourismlab.com ↗</a></div><div><p class="eyebrow">START A CONVERSATION</p><p>Send us a message and tell us what you're working on.</p><a class="button button-dark" href="mailto:info@thetourismlab.com?subject=Let%27s%20connect">Send an email ↗</a></div></div>
+<Layout title="Contact Us" showConnect={false}>
+  <PageHero eyebrow="HOME / CONTACT US" title="Contact Us" description="Tell us about your goals — we'd love to start the conversation." stats={[{value:'Miami',label:'HEADQUARTERS'}]} />
+  <section class="section-pad section-tinted"><div class="wrap contact-layout">
+    <div><p class="eyebrow">GET IN TOUCH</p><h2>Let's connect the dots <em>together</em></h2><p class="lead">We'd love to start a conversation about how we can support your goals and create meaningful progress in tourism and hospitality.</p>
+      <div class="contact-details"><div><p class="eyebrow">HEADQUARTERS</p><p>Miami, Florida</p></div><div><p class="eyebrow">EMAIL</p><a href="mailto:info@thetourismlab.com">info@thetourismlab.com</a></div><div><p class="eyebrow">FIND US ON SOCIAL</p><div class="social-links"><a href="https://www.instagram.com/thetourismlab/" target="_blank" rel="noopener noreferrer">Instagram ↗</a><a href="https://www.linkedin.com/company/thetourismlab/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a></div></div></div>
+    </div>
+    <div class="contact-form-panel"><p class="eyebrow">SEND US A MESSAGE</p><h3>How can we help?</h3>
+      <p>Send your message using your email application.</p>
+      <form id="contact-form">
+        <div class="form-row"><label>Full name *<input name="name" required autocomplete="name" /></label><label>Phone number<input name="phone" type="tel" autocomplete="tel" /></label></div>
+        <label>Email *<input name="email" type="email" required autocomplete="email" /></label>
+        <label>Website or social media link<input name="website" type="url" placeholder="https://" /></label>
+        <label>Message *<textarea name="message" rows="6" required></textarea></label>
+        <button class="button button-dark" type="submit">Open email draft →</button><span class="form-note"> * Required fields</span>
+      </form>
+    </div>
   </div></section>
+  <script>
+    const form = document.querySelector('#contact-form');
+    form?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!(form instanceof HTMLFormElement) || !form.reportValidity()) return;
+      const data = new FormData(form);
+      const body = `Name: ${data.get('name')}\nEmail: ${data.get('email')}\nPhone: ${data.get('phone')}\nWebsite: ${data.get('website')}\n\n${data.get('message')}`;
+      location.href = `mailto:info@thetourismlab.com?subject=${encodeURIComponent('Website inquiry')}&body=${encodeURIComponent(body)}`;
+    });
+  </script>
 </Layout>

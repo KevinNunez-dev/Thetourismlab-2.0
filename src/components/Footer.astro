@@ -1,15 +1,22 @@
-<section class="connect-band">
+---
+import { assets } from '../lib/assets';
+const { showConnect = true } = Astro.props;
+---
+{showConnect && <section id="connect" class="connect-band" style={`--connect-image: url("${assets.ocean}")`}>
   <div class="wrap connect-inner">
-    <div><p class="eyebrow light">A WORLD OF CONNECTIONS</p><h2>Let's <em>connect</em> the dots.</h2><p>Have an idea, a story, or an opportunity to share? We'd love to hear from you.</p></div>
-    <a class="button button-light" href="/contact-us/">Start a conversation <span aria-hidden="true">↗</span></a>
+    <p class="eyebrow light">STAY CONNECTED</p>
+    <h2>Let's <em>connect</em> the dots</h2>
+    <p>Follow the insights, ideas and conversations shaping the future of tourism.</p>
+    <p class="newsletter-note">Newsletter coming soon</p>
+    <a class="text-link text-link-light" href="/contact-us/">Contact us <span aria-hidden="true">→</span></a>
   </div>
-</section>
+</section>}
 <footer class="footer">
   <div class="wrap footer-grid">
-    <div><a class="footer-brand" href="/">THE TOURISM LAB<span>.</span></a><p>Where tourism thinks forward.</p></div>
-    <div><h3>Explore</h3><a href="/editorial-series/">Editorial series</a><a href="/industry-news/">Industry news</a><a href="/who-we-serve/">Who we serve</a></div>
-    <div><h3>About</h3><a href="/the-tourism-lab/">The Tourism Lab</a><a href="/our-team/">Our team</a><a href="/contact-us/">Contact us</a></div>
+    <div><a class="footer-logo" href="/" aria-label="The Tourism Lab home"><img src={assets.logo} alt="" loading="lazy" /></a></div>
+    <div><h3>Shortcuts</h3><a href="/the-tourism-lab/">The Tourism Lab</a><a href="/who-we-serve/">Who we serve</a><a href="/our-team/">Our team</a><a href="/contact-us/">Contact us</a></div>
+    <div><h3>Explore</h3><a href="/editorial-series/">Editorial series</a><a href="/industry-news/">Industry news</a><a href="/contact-us/">Contact us</a></div>
     <div><h3>Get in touch</h3><p>Miami, Florida</p><a href="mailto:info@thetourismlab.com">info@thetourismlab.com</a></div>
   </div>
-  <div class="wrap footer-bottom"><span>© {new Date().getFullYear()} THE TOURISM LAB</span><span>INSIGHTS. IDEAS. CONNECTIONS.</span></div>
+  <div class="wrap footer-bottom"><span>© {new Date().getFullYear()} ALL RIGHTS RESERVED</span><span><a href="https://www.instagram.com/thetourismlab/" target="_blank" rel="noopener noreferrer">INSTAGRAM</a> &nbsp;&nbsp; <a href="https://www.linkedin.com/company/thetourismlab/" target="_blank" rel="noopener noreferrer">LINKEDIN</a></span></div>
 </footer>

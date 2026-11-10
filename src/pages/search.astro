@@ -1,0 +1,32 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import { getPosts, plainText } from '../lib/wordpress';
+const posts = (await getPosts()).map((post) => ({ slug: post.slug, title: plainText(post.title.rendered) }));
+---
+<Layout title="Search">
+  <PageHero eyebrow="HOME / SEARCH" title="Search Stories" description="Explore stories from across the tourism industry." />
+  <section class="section-pad"><div class="wrap search-page">
+    <form action="/search/" role="search"><label for="search-query">Search stories</label><div><input id="search-query" type="search" name="q" required /><button class="button button-dark" type="submit">Search</button></div></form>
+    <p id="search-status" aria-live="polite"></p><ul id="search-results"></ul>
+  </div></section>
+  <script define:vars={{ posts }}>
+    const query = new URLSearchParams(location.search).get('q')?.trim() || '';
+    const input = document.querySelector('#search-query');
+    const status = document.querySelector('#search-status');
+    const list = document.querySelector('#search-results');
+    if (input instanceof HTMLInputElement && status && list && query) {
+      input.value = query;
+      const results = posts.filter((post) => post.title.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+      status.textContent = `${results.length} ${results.length === 1 ? 'story' : 'stories'} found for “${query}”.`;
+      for (const post of results) {
+        const item = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = `/stories/${encodeURIComponent(post.slug)}/`;
+        link.textContent = post.title;
+        item.append(link);
+        list.append(item);
+      }
+    }
+  </script>
+</Layout>

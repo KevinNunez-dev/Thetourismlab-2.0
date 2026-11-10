@@ -1,0 +1,26 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import PageHero from '../../../../components/PageHero.astro';
+import ArticleCard from '../../../../components/ArticleCard.astro';
+import FeaturedStory from '../../../../components/FeaturedStory.astro';
+import EditorialFilters from '../../../../components/EditorialFilters.astro';
+import { getPosts, inCategories, topics } from '../../../../lib/wordpress';
+import type { GetStaticPaths } from 'astro';
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getPosts();
+  return topics.filter((topic) => topic.editorialCategories).flatMap((topic) => paginate(inCategories(posts, topic.editorialCategories || []), { params: { topic: topic.slug }, props: { topic }, pageSize: 10 }));
+}) satisfies GetStaticPaths;
+const { page, topic } = Astro.props;
+---
+<Layout title={`${topic.name} | Editorial Series`}>
+  <PageHero eyebrow="HOME / EDITORIAL SERIES" title="Editorial Series" description="Analysis and perspectives from the people shaping cruises, ports, destinations and travel." stats={[{value:String(page.total),label:'STORIES IN THIS AREA'}]} />
+  <section class="listing-intro"><div class="wrap listing-intro-grid">
+    <div><p class="eyebrow">LATEST STORIES</p><h2>Read by <em>area of interest</em></h2></div><div><p>Perspectives and ideas from across the tourism ecosystem.</p><EditorialFilters active={topic.slug} /></div>
+  </div></section>
+  <section class="section-pad section-tinted"><div class="wrap">
+    {page.data[0] ? <><FeaturedStory post={page.data[0]} label={topic.name} /><div class="more-heading"><h2>More from the series</h2><span>{Math.max(page.data.length - 1, 0)} stories</span></div><div class="card-grid">{page.data.slice(1).map((post) => <ArticleCard post={post} label={topic.name} />)}</div></> : <p>No stories have been published in this area yet.</p>}
+    <nav class="pagination" aria-label={`${topic.name} editorial pages`}>
+      {page.url.prev && <a href={page.url.prev}>← Previous</a>}<span>Page {page.currentPage} of {page.lastPage}</span>{page.url.next && <a href={page.url.next}>Next →</a>}
+    </nav>
+  </div></section>
+</Layout>

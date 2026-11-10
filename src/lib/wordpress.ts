@@ -18,13 +18,14 @@ export interface Topic {
   name: string;
   description: string;
   categories: number[];
+  editorialCategories?: number[];
 }
 
 export const topics: Topic[] = [
-  { slug: 'cruise-lines', name: 'Cruise Lines', description: 'New ships, itineraries, appointments and milestones from across the cruise industry.', categories: [69] },
-  { slug: 'ports-and-destinations', name: 'Ports and Destinations', description: 'The places, ports and people connecting the world of travel.', categories: [99] },
-  { slug: 'travel-and-tourism', name: 'Travel and Tourism', description: 'Ideas, experiences and developments shaping travel around the world.', categories: [71] },
-  { slug: 'sustainability', name: 'Sustainability', description: 'A closer look at responsible tourism and the communities behind it.', categories: [98] },
+  { slug: 'cruise-lines', name: 'Cruise Lines', description: 'New ships, itineraries, appointments and milestones from across the cruise industry.', categories: [69], editorialCategories: [94] },
+  { slug: 'ports-and-destinations', name: 'Ports and Destinations', description: 'The places, ports and people connecting the world of travel.', categories: [99], editorialCategories: [95] },
+  { slug: 'travel-and-tourism', name: 'Travel and Tourism', description: 'Ideas, experiences and developments shaping travel around the world.', categories: [71], editorialCategories: [96] },
+  { slug: 'sustainability', name: 'Sustainability', description: 'A closer look at responsible tourism and the communities behind it.', categories: [98], editorialCategories: [97] },
   { slug: 'associations', name: 'Associations', description: 'The organizations, partnerships and conversations moving tourism forward.', categories: [100] },
 ];
 
@@ -65,7 +66,10 @@ export function plainText(html: string): string {
 }
 
 export function imageFor(post: WordPressPost) {
-  return post._embedded?.['wp:featuredmedia']?.[0];
+  const featured = post._embedded?.['wp:featuredmedia']?.[0];
+  if (featured?.source_url) return featured;
+  const match = post.content.rendered.match(/<img\b[^>]*\bsrc=["'](https?:\/\/[^"']+)["']/i);
+  return match ? { source_url: match[1].replace(/&amp;/g, '&'), alt_text: '' } : undefined;
 }
 
 export function formatDate(date: string): string {

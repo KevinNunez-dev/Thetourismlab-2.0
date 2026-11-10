@@ -1,15 +1,26 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
+import { assets } from '../lib/assets';
 ---
 <Layout title="The Tourism Lab">
-  <PageHero eyebrow="HOME / ABOUT" title="The Tourism Lab" description="A tourism marketing and PR agency connecting cruise lines, ports, destinations and brands." />
-  <section class="section-pad"><div class="wrap split-content">
-    <div><p class="eyebrow">OUR STORY</p><h2>The Tourism Lab began with a <em>simple belief.</em></h2></div>
-    <div class="prose"><p class="lead">When strategy connects with purpose and people, tourism creates stronger brands, deeper relationships, and more meaningful impact.</p><p>What started as Andrea Baigorria's vision has grown into a multidisciplinary team with experience across commercial strategy, MICE, marketing, sustainability, and partnerships.</p><p>Today, The Tourism Lab partners with cruise lines, ports, destinations, brands, and organizations that want to strengthen their identity, build lasting connections, and unlock new opportunities through insight-led and human-centered communications.</p><p>Headquartered in Miami, Florida, our team supports clients globally with a collaborative approach shaped by industry expertise, cultural awareness, and a deep understanding of how tourism moves people and business forward.</p><a class="text-link" href="/our-team/">Meet our team ↗</a></div>
+  <PageHero eyebrow="HOME / ABOUT" title="The Tourism Lab" description="A tourism marketing and PR agency connecting cruise lines, ports, destinations and brands." stats={[{value:'2024',label:'FOUNDED'},{value:'Miami',label:'HEADQUARTERS'}]} />
+  <section class="image-split">
+    <div class="image-split-copy"><p class="eyebrow">OUR STORY</p><h2>The Tourism Lab began with <em>a simple belief</em></h2>
+      <p class="lead">When strategy connects with purpose and people, tourism creates stronger brands, deeper relationships, and more meaningful impact.</p>
+      <p>What started as Andrea Baigorria's vision has grown into a multidisciplinary team with more than 20 years of experience across commercial strategy, MICE, marketing, sustainability, and partnerships.</p>
+      <p>Today, The Tourism Lab partners with cruise lines, ports, destinations, brands, and organizations that want to strengthen their identity, build lasting connections, and unlock new opportunities through insight-led and human-centered communications.</p>
+      <p>Headquartered in Miami, Florida, our team supports clients globally with a collaborative approach shaped by industry expertise, cultural awareness, and a deep understanding of how tourism moves people and business forward.</p>
+      <div class="about-stats"><span><strong>20+</strong> YEARS OF TEAM EXPERIENCE</span><span><strong>50+</strong> COUNTRIES OF EXPERIENCE</span></div>
+    </div>
+    <img src={assets.hero} alt="Cruise ship sailing among coastal islands" loading="lazy" />
+  </section>
+  <section class="focus-section section-pad"><div class="wrap focus-layout">
+    <div><p class="eyebrow light">OUR VALUE PROPOSITION</p><h2>We bring together strategic insight, creativity, and <em>human connection</em></h2><p>We help our clients make confident decisions and build meaningful relationships. Our team works as an extension of yours, turning ideas into opportunities and guiding each project with intention and care.</p><a class="text-link text-link-light" href="/who-we-serve/">Discover what we do →</a></div>
+    <img class="focus-image" src="/images/audience-port.webp" alt="A port city and marina" loading="lazy" />
   </div></section>
-  <section class="section-pad section-tinted"><div class="wrap split-content">
-    <div><p class="eyebrow">OUR VALUE PROPOSITION</p><h2>Insight, creativity, and <em>human connection.</em></h2></div>
-    <div class="prose"><p class="lead">We help our clients make confident decisions and build meaningful relationships.</p><p>Our team works as an extension of yours, turning ideas into opportunities and guiding each project with intention and care.</p><a class="text-link" href="/who-we-serve/">Discover what we do ↗</a></div>
-  </div></section>
+  <section class="image-split">
+    <div class="image-split-copy"><p class="eyebrow">WHO WE ARE: OUR FOUNDER</p><h2>Connecting industries, cultures, and <em>people worldwide</em></h2><p>Andrea Baigorria founded The Tourism Lab in 2024 to bridge industry players and advance sustainable tourism through long-term, purpose-driven collaborations.</p><p>Blending her expertise as a strategic consultant, global communicator, and certified travel advisor, Andrea helps travel and hospitality organizations evolve, connect, and lead with purpose.</p><a class="text-link" href="/our-team/">Meet our team →</a></div>
+    <img src={assets.founderAlternate} alt="Andrea Baigorria, founder of The Tourism Lab" loading="lazy" />
+  </section>
 </Layout>
