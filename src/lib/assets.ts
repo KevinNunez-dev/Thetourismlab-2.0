@@ -8,7 +8,7 @@ export const assets = {
   ocean: '/images/ocean-ship.webp',
   map: '/images/world-map.webp',
   founder: '/images/founder.webp',
-  founderAlternate: `${uploads}/2026/03/andrea-baigorria-3.jpg`,
+  founderAlternate: '/images/founder-about.webp',
   laura: '/images/laura.webp',
   marite: '/images/marite.webp',
   luz: '/images/luz.webp',

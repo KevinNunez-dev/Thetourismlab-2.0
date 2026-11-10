@@ -19,6 +19,10 @@ Connect this repository to Cloudflare Pages. Set the build command to `npm run b
 
 Articles are a snapshot at build time, not live API requests in each visitor's browser. Configure a Cloudflare Pages deploy hook and trigger it from WordPress when content changes, or rebuild manually. WordPress and its media URLs must remain publicly accessible to builds and visitors. Images continue to be served by WordPress; they are not copied to Cloudflare.
 
+The REST API fetches published posts with embedded authors and featured media from `WORDPRESS_URL` (which defaults to `https://thetourismlab.com`). Post images use the WordPress media URL directly; when no featured image is available, the frontend can use the first image URL in the post content. Images and other media in post content also remain hosted by WordPress. These URLs are not automatically rewritten when `WORDPRESS_URL` changes.
+
+The API does not automatically sync the entire WordPress media library or populate the static informational pages. Those pages use explicitly selected assets from `public/images` and, in some cases, direct WordPress upload URLs listed in `src/lib/assets.ts`. The partner logos and Instagram images on The Tourism Lab page are static assets from the supplied design PDF, not a live Instagram feed; update them in the project when the design changes. The Instagram button links to the account.
+
 ## Contact form setup
 
 The form submits to a Cloudflare Pages Function, which validates the input and Turnstile token, then sends via Cloudflare Email Service. Messages are sent **from** `noreply@thetourismlab.com` **to** `info@thetourismlab.com`; Reply-To is the visitor's email address. A successful response means Cloudflare accepted the email, not that delivery to the inbox is guaranteed.

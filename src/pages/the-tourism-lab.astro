@@ -2,6 +2,19 @@
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
 import { assets } from '../lib/assets';
+const partners = [
+  { name: 'Windstar Cruises', image: '/images/partner-windstar.webp' },
+  { name: 'intelligenSea', image: '/images/partner-intelligensea.webp' },
+  { name: 'Essential Costa Rica and PROCOMER', image: '/images/partner-costa-rica-procomer.webp' },
+  { name: 'Costa del Sol Hoteles and Wyndham', image: '/images/partner-costa-del-sol.webp' },
+  { name: 'Margaritaville at Sea', image: '/images/partner-margaritaville.webp' },
+];
+const instagramImages = [
+  { image: '/images/instagram-tourism-event.webp', alt: 'Tourism industry event and attendees' },
+  { image: '/images/instagram-maritime-day.webp', alt: 'World Maritime Day graphic featuring a cruise ship' },
+  { image: '/images/instagram-fam-trip.webp', alt: 'Cruise Baltic familiarization trip graphic' },
+  { image: '/images/instagram-team.webp', alt: 'Tourism professionals at an event' },
+];
 ---
 <Layout title="The Tourism Lab">
   <PageHero eyebrow="HOME / ABOUT" title="The Tourism Lab" description="A tourism marketing and PR agency connecting cruise lines, ports, destinations and brands." image={assets.ocean} stats={[{value:'2024',label:'FOUNDED'},{value:'Miami',label:'HEADQUARTERS'}]} />
@@ -19,8 +32,20 @@ import { assets } from '../lib/assets';
     <div><p class="eyebrow light">OUR VALUE PROPOSITION</p><h2>We bring together strategic insight, creativity, and <em>human connection</em></h2><p>We help our clients make confident decisions and build meaningful relationships. Our team works as an extension of yours, turning ideas into opportunities and guiding each project with intention and care.</p><a class="text-link text-link-light" href="/who-we-serve/">Discover what we do →</a></div>
     <img class="focus-image" src="/images/audience-port.webp" alt="A port city and marina" loading="lazy" />
   </div></section>
-  <section class="image-split">
+  <section class="image-split about-founder">
     <div class="image-split-copy"><p class="eyebrow">WHO WE ARE: OUR FOUNDER</p><h2>Connecting industries, cultures, and <em>people worldwide</em></h2><p>Andrea Baigorria founded The Tourism Lab in 2024 to bridge industry players and advance sustainable tourism through long-term, purpose-driven collaborations.</p><p>Blending her expertise as a strategic consultant, global communicator, and certified travel advisor, Andrea helps travel and hospitality organizations evolve, connect, and lead with purpose.</p><a class="text-link" href="/our-team/">Meet our team →</a></div>
     <img src={assets.founderAlternate} alt="Andrea Baigorria, founder of The Tourism Lab" loading="lazy" />
+  </section>
+  <section class="partners-section section-pad">
+    <div class="wrap">
+      <div class="partners-heading"><p class="eyebrow">CLIENTS AND PARTNERS</p><h2>Brands and companies <em>we have worked with</em></h2></div>
+      <ul class="partners-grid">{partners.map((partner) => <li><img src={partner.image} alt={partner.name} loading="lazy" /></li>)}</ul>
+    </div>
+  </section>
+  <section class="instagram-section section-pad">
+    <div class="wrap">
+      <div class="instagram-heading"><div><p class="eyebrow">INSTAGRAM</p><h2>Follow us on <em>Instagram</em></h2></div><a class="button button-dark" href="https://www.instagram.com/thetourismlab/" target="_blank" rel="noopener noreferrer">Follow @thetourismlab <span aria-hidden="true">↗</span></a></div>
+      <div class="instagram-grid">{instagramImages.map((item) => <img src={item.image} alt={item.alt} loading="lazy" />)}</div>
+    </div>
   </section>
 </Layout>
