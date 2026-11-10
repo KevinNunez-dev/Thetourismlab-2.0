@@ -19,10 +19,28 @@ Connect this repository to Cloudflare Pages. Set the build command to `npm run b
 
 Articles are a snapshot at build time, not live API requests in each visitor's browser. Configure a Cloudflare Pages deploy hook and trigger it from WordPress when content changes, or rebuild manually. WordPress and its media URLs must remain publicly accessible to builds and visitors. Images continue to be served by WordPress; they are not copied to Cloudflare.
 
+## Contact form setup
+
+The form submits to a Cloudflare Pages Function, which validates the input and Turnstile token, then sends via Cloudflare Email Service. Messages are sent **from** `noreply@thetourismlab.com` **to** `info@thetourismlab.com`; Reply-To is the visitor's email address. A successful response means Cloudflare accepted the email, not that delivery to the inbox is guaranteed.
+
+1. In Cloudflare, enable [Email Service](https://developers.cloudflare.com/email-service/) and [configure and verify](https://developers.cloudflare.com/email-service/configuration/domains/) `thetourismlab.com` as a sending domain. This integration uses the Email Sending REST API; review Cloudflare's plan and account eligibility requirements, including its Workers Paid requirement for Email Sending, and verify any destination requirements in the dashboard. Review DNS changes carefully so existing email keeps working. Do not replace existing SPF records without merging them correctly.
+2. Create a Cloudflare API token limited to the account and the Email Sending permission needed to send messages. Copy it directly into the Pages dashboard as a secret, never into Git or chat.
+3. Create a [Turnstile widget](https://developers.cloudflare.com/turnstile/get-started/) and allow the deployed website's hostname. Add the specific Pages preview hostname as well if testing previews. Keep the site key and secret key for the next step.
+4. In the Pages project's settings, configure production (and preview separately if needed):
+   - Build-time variable `PUBLIC_TURNSTILE_SITE_KEY`: the widget's public site key. This is embedded into the generated page.
+   - Runtime variable `CLOUDFLARE_ACCOUNT_ID`: the account ID for Email Service.
+   - Runtime **secret** `CLOUDFLARE_EMAIL_API_TOKEN`: the scoped sending token.
+   - Runtime **secret** `TURNSTILE_SECRET_KEY`: the widget secret.
+5. Deploy via Pages Git integration or Wrangler; dashboard Direct Upload does not support Pages Functions. Redeploy after setting the public site key. Submit a test on the deployed site and confirm the message arrives in the inbox and that Reply addresses the visitor. Check Pages Function logs and Email Service delivery activity if it fails.
+
+`npm run dev` and `npm run preview` run Astro only; they do not execute Pages Functions. `npm test` checks the handler with mocked Cloudflare services and does not send an email. Use the Cloudflare Pages runtime or a deployed preview to test the complete flow. The form remains disabled with an email link when the site key is absent. If runtime settings are missing, the server reports an error instead of pretending to send.
+
+Turnstile reduces automated abuse but does not replace rate limiting. Configure Cloudflare WAF rate limiting and review the site's privacy notice, retention, and any Email Service usage charges before production use.
+
 ## Before presenting or launching
 
 - The kit calls for Editorial Today and Neulis Sans. They are not included in the supplied assets, so system serif and sans-serif fallbacks are used until appropriately licensed font files are supplied. The header uses the existing white WordPress logo. The hero, section and team images are optimized from the supplied mockup PDFs; confirm licensing and client approval for all photography before public launch.
-- The contact form opens a draft in the visitor's email application; it does not send mail from a server. Newsletter subscription is not yet integrated. Connect approved providers and a privacy policy before enabling production submissions.
+- Newsletter subscription is not yet integrated. Connect an approved provider and privacy policy before enabling subscriptions.
 - Topic mappings in `src/lib/wordpress.ts` use the current WordPress category IDs. Editorial and industry-news categories are separate in WordPress. Update the mappings if the CMS taxonomy changes.
 - The prototype generates articles at `/stories/<slug>/`; existing WordPress articles use root-level paths. Plan and test redirects, canonical URLs, sitemap, metadata, analytics, accessibility and performance before a domain cutover. In particular, do not point the WordPress API origin at the new frontend without arranging a separate accessible WordPress origin.
 - WordPress article HTML is rendered as supplied by the CMS. Only trusted editors should be allowed to publish; review sanitization and embeds for your production security requirements.

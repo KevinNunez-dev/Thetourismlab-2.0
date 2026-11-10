@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
+const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 ---
 <Layout title="Contact Us" showConnect={false}>
   <PageHero eyebrow="HOME / CONTACT US" title="Contact Us" description="Tell us about your goals — we'd love to start the conversation." stats={[{value:'Miami',label:'HEADQUARTERS'}]} />
@@ -9,24 +10,50 @@ import PageHero from '../components/PageHero.astro';
       <div class="contact-details"><div><p class="eyebrow">HEADQUARTERS</p><p>Miami, Florida</p></div><div><p class="eyebrow">EMAIL</p><a href="mailto:info@thetourismlab.com">info@thetourismlab.com</a></div><div><p class="eyebrow">FIND US ON SOCIAL</p><div class="social-links"><a href="https://www.instagram.com/thetourismlab/" target="_blank" rel="noopener noreferrer">Instagram ↗</a><a href="https://www.linkedin.com/company/thetourismlab/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a></div></div></div>
     </div>
     <div class="contact-form-panel"><p class="eyebrow">SEND US A MESSAGE</p><h3>How can we help?</h3>
-      <p>Send your message using your email application.</p>
-      <form id="contact-form">
-        <div class="form-row"><label>Full name *<input name="name" required autocomplete="name" /></label><label>Phone number<input name="phone" type="tel" autocomplete="tel" /></label></div>
-        <label>Email *<input name="email" type="email" required autocomplete="email" /></label>
-        <label>Website or social media link<input name="website" type="url" placeholder="https://" /></label>
-        <label>Message *<textarea name="message" rows="6" required></textarea></label>
-        <button class="button button-dark" type="submit">Open email draft →</button><span class="form-note"> * Required fields</span>
+      <p>Send us a message directly. Fields marked * are required.</p>
+      <form id="contact-form" method="post" action="/api/contact">
+        <div class="form-row"><label>Full name *<input name="name" required maxlength="120" autocomplete="name" /></label><label>Phone number<input name="phone" type="tel" maxlength="50" autocomplete="tel" /></label></div>
+        <label>Email *<input name="email" type="email" required maxlength="254" autocomplete="email" /></label>
+        <label>Website or social media link<input name="website" type="url" maxlength="500" placeholder="https://" /></label>
+        <label>Message *<textarea name="message" rows="6" maxlength="5000" required></textarea></label>
+        {siteKey ? <div class="cf-turnstile" data-sitekey={siteKey} data-size="flexible"></div> : <p class="form-status error">The contact form is not configured yet. Please email <a href="mailto:info@thetourismlab.com">info@thetourismlab.com</a>.</p>}
+        <button class="button button-dark" type="submit" disabled={!siteKey}>Send message →</button><span class="form-note"> * Required fields</span>
+        <p id="contact-status" class="form-status" role="status" aria-live="polite"></p>
       </form>
     </div>
   </div></section>
+  {siteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
   <script>
     const form = document.querySelector('#contact-form');
-    form?.addEventListener('submit', (event) => {
+    const status = document.querySelector('#contact-status');
+    form?.addEventListener('submit', async (event) => {
       event.preventDefault();
-      if (!(form instanceof HTMLFormElement) || !form.reportValidity()) return;
+      if (!(form instanceof HTMLFormElement) || !(status instanceof HTMLElement) || !form.reportValidity()) return;
       const data = new FormData(form);
-      const body = `Name: ${data.get('name')}\nEmail: ${data.get('email')}\nPhone: ${data.get('phone')}\nWebsite: ${data.get('website')}\n\n${data.get('message')}`;
-      location.href = `mailto:info@thetourismlab.com?subject=${encodeURIComponent('Website inquiry')}&body=${encodeURIComponent(body)}`;
+      const token = data.get('cf-turnstile-response');
+      if (typeof token !== 'string' || !token) {
+        status.textContent = 'Please complete the security check before sending.';
+        return;
+      }
+      const button = form.querySelector('button[type="submit"]');
+      if (!(button instanceof HTMLButtonElement)) return;
+      button.disabled = true;
+      status.textContent = 'Sending your message…';
+      try {
+        const body = new URLSearchParams();
+        for (const [key, value] of data) if (typeof value === 'string') body.append(key, value);
+        const response = await fetch(form.action, { method: 'POST', body });
+        const result = await response.json();
+        status.textContent = typeof result.message === 'string' ? result.message : 'Something went wrong. Please try again.';
+        if (response.ok) form.reset();
+      } catch (error) {
+        console.error('Contact form submission failed:', error);
+        status.textContent = 'Your message could not be sent. Please try again or email info@thetourismlab.com.';
+      } finally {
+        const turnstile = Reflect.get(window, 'turnstile');
+        if (turnstile && typeof turnstile.reset === 'function') turnstile.reset();
+        button.disabled = false;
+      }
     });
   </script>
 </Layout>

@@ -178,6 +178,7 @@ h2{font-size:clamp(36px,3.8vw,56px)}
 .contact-form-panel input,.contact-form-panel textarea,.search-page input{width:100%;display:block;border:0;border-bottom:1px solid #dbe4e2;background:var(--cream);padding:14px;margin-top:8px;font:15px var(--sans)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}.contact-form-panel button,.search-page button{border:0;cursor:pointer}.form-note{font-size:11px;color:var(--body);margin-left:15px}
 .social-links{display:flex;gap:10px}.contact-details .social-links a{font:11px var(--sans);border:1px solid var(--teal);border-radius:20px;padding:8px 14px}
+.form-status{margin:16px 0 0;font-size:13px;color:var(--navy)}.form-status.error{color:#8e342b}.form-status a{text-decoration:underline}.contact-form-panel button:disabled{opacity:.55;cursor:not-allowed}.cf-turnstile{margin:20px 0}
 .search-page form>div{display:flex;gap:15px}.search-page input{max-width:500px;margin:0}.search-page ul{padding:0;list-style:none}.search-page li{border-bottom:1px solid #dce5e3;padding:15px 0;font:23px var(--serif)}.search-page li a:hover{color:var(--teal)}
 .connect-band{background-color:var(--navy);background-image:linear-gradient(#0d4658c9,#0d4658d9),var(--connect-image);background-position:center;background-size:cover;padding:80px 0;text-align:center}
 .connect-inner{display:block}.connect-inner h2 em{color:#8cd2c7}.connect-inner>p:not(.eyebrow){max-width:380px;color:#fff;margin:15px auto}
