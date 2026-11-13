@@ -11,17 +11,46 @@ npm ci
 npm run dev
 ```
 
-Copy `.env.example` to `.env` to override the WordPress origin or the frontend URL. `npm run build` type-checks and generates the static site in `dist`; `npm run preview` serves that build locally. A build requires access to the WordPress REST API and intentionally fails rather than publishing an empty site if the API is unavailable.
+Copy `.env.example` to `.env` to override the WordPress origin or the frontend URL. `npm run build` type-checks and generates the static site in `dist`; generated HTML retains whitespace to make it easier to inspect, at the cost of slightly larger files. `npm run preview` serves that build locally. A build requires access to the WordPress REST API and intentionally fails rather than publishing an empty site if the API is unavailable.
 
 ## Deploy to Cloudflare Pages
 
 Connect this repository to Cloudflare Pages. Set the build command to `npm run build`, the output directory to `dist`, and `NODE_VERSION` to `22.19.0` or a newer supported version. Set `WORDPRESS_URL` to the WordPress origin and `SITE_URL` to the frontend's actual origin. Neither variable is a secret. The site uses static output and does not require a Cloudflare adapter.
 
-Articles are a snapshot at build time, not live API requests in each visitor's browser. Configure a Cloudflare Pages deploy hook and trigger it from WordPress when content changes, or rebuild manually. WordPress and its media URLs must remain publicly accessible to builds and visitors. Images continue to be served by WordPress; they are not copied to Cloudflare.
+Articles are a snapshot at build time, not live API requests in each visitor's browser. Set up automatic rebuilds as described in [Rebuild when WordPress content changes](#rebuild-when-wordpress-content-changes), or rebuild manually. WordPress and its media URLs must remain publicly accessible to builds and visitors. Images continue to be served by WordPress; they are not copied to Cloudflare.
 
 The REST API fetches published posts with embedded authors and featured media from `WORDPRESS_URL` (which defaults to `https://thetourismlab.com`). Post images use the WordPress media URL directly; when no featured image is available, the frontend can use the first image URL in the post content. Images and other media in post content also remain hosted by WordPress. These URLs are not automatically rewritten when `WORDPRESS_URL` changes.
 
 The API does not automatically sync the entire WordPress media library or populate the static informational pages. Those pages use explicitly selected assets from `public/images` and, in some cases, direct WordPress upload URLs listed in `src/lib/assets.ts`. The partner logos and Instagram images on The Tourism Lab page are static assets from the supplied design PDF, not a live Instagram feed; update them in the project when the design changes. The Instagram button links to the account.
+
+## Rebuild when WordPress content changes
+
+1. In Cloudflare, open the Pages project, then **Settings → Builds → Deploy hooks**, and add a hook for the production branch (for example `wordpress-publish`). Copy the URL. Treat it as a secret: anyone with it can trigger builds.
+2. On the WordPress server, add the URL to `wp-config.php`:
+
+   ```php
+   define('TTL_DEPLOY_HOOK_URL', 'https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/...');
+   ```
+
+3. Add this as a must-use plugin (`wp-content/mu-plugins/ttl-deploy-hook.php`) or in a child theme's `functions.php`:
+
+   ```php
+   <?php
+   add_action('transition_post_status', function ($new, $old, $post) {
+       if ($post->post_type !== 'post' || ($new !== 'publish' && $old !== 'publish')) return;
+       if (!defined('TTL_DEPLOY_HOOK_URL') || get_transient('ttl_deploy_pending')) return;
+       // Debounce: batch edits made within one minute into a single build.
+       set_transient('ttl_deploy_pending', 1, 60);
+       wp_schedule_single_event(time() + 60, 'ttl_trigger_deploy');
+   }, 10, 3);
+
+   add_action('ttl_trigger_deploy', function () {
+       wp_remote_post(TTL_DEPLOY_HOOK_URL, ['timeout' => 10]);
+   });
+   ```
+
+   This fires on publish, update, unpublish and trash of posts. Scheduled events rely on WP-Cron, which runs when the site receives traffic.
+4. Publish or edit a test post and confirm a new deployment appears in the Pages project, then check the post on the site once it finishes.
 
 ## Contact form setup
 
