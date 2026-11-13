@@ -1,0 +1,35 @@
+name: Rebuild WordPress content
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  trigger-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Cloudflare Pages deployment
+        env:
+          DEPLOY_HOOK_URL: ${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK_URL }}
+        shell: bash
+        run: |
+          if [[ -z "$DEPLOY_HOOK_URL" ]]; then
+            echo "::error::Set the CLOUDFLARE_PAGES_DEPLOY_HOOK_URL repository secret."
+            exit 1
+          fi
+
+          if ! response=$(curl --silent --show-error --fail \
+            --connect-timeout 10 --max-time 30 --request POST -- "$DEPLOY_HOOK_URL"); then
+            echo "::error::Cloudflare deploy hook request failed."
+            exit 1
+          fi
+
+          if ! jq -e '.success == true' <<< "$response" > /dev/null; then
+            echo "::error::Cloudflare did not confirm the deployment request."
+            exit 1
+          fi
+
+          echo "Cloudflare accepted the deployment request. Check Pages for build status."

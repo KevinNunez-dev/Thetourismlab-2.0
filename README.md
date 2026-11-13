@@ -17,40 +17,22 @@ Copy `.env.example` to `.env` to override the WordPress origin or the frontend U
 
 Connect this repository to Cloudflare Pages. Set the build command to `npm run build`, the output directory to `dist`, and `NODE_VERSION` to `22.19.0` or a newer supported version. Set `WORDPRESS_URL` to the WordPress origin and `SITE_URL` to the frontend's actual origin. Neither variable is a secret. The site uses static output and does not require a Cloudflare adapter.
 
-Articles are a snapshot at build time, not live API requests in each visitor's browser. Set up automatic rebuilds as described in [Rebuild when WordPress content changes](#rebuild-when-wordpress-content-changes), or rebuild manually. WordPress and its media URLs must remain publicly accessible to builds and visitors. Images continue to be served by WordPress; they are not copied to Cloudflare.
+Articles are a snapshot at build time, not live API requests in each visitor's browser. Set up automatic rebuilds as described in [Scheduled WordPress content rebuilds](#scheduled-wordpress-content-rebuilds), or rebuild manually. WordPress and its media URLs must remain publicly accessible to builds and visitors. Images continue to be served by WordPress; they are not copied to Cloudflare.
 
 The REST API fetches published posts with embedded authors and featured media from `WORDPRESS_URL` (which defaults to `https://thetourismlab.com`). Post images use the WordPress media URL directly; when no featured image is available, the frontend can use the first image URL in the post content. Images and other media in post content also remain hosted by WordPress. These URLs are not automatically rewritten when `WORDPRESS_URL` changes.
 
 The API does not automatically sync the entire WordPress media library or populate the static informational pages. Those pages use explicitly selected assets from `public/images` and, in some cases, direct WordPress upload URLs listed in `src/lib/assets.ts`. The partner logos and Instagram images on The Tourism Lab page are static assets from the supplied design PDF, not a live Instagram feed; update them in the project when the design changes. The Instagram button links to the account.
 
-## Rebuild when WordPress content changes
+## Scheduled WordPress content rebuilds
 
-1. In Cloudflare, open the Pages project, then **Settings → Builds → Deploy hooks**, and add a hook for the production branch (for example `wordpress-publish`). Copy the URL. Treat it as a secret: anyone with it can trigger builds.
-2. On the WordPress server, add the URL to `wp-config.php`:
+The GitHub Actions workflow [Rebuild WordPress content](.github/workflows/rebuild-wordpress.yml) requests a Cloudflare Pages build every hour at minute 17, even if nothing has changed. Changes appear only after a successful build and deployment; GitHub may delay scheduled runs, and build minutes and deployment limits apply. Failed builds leave the previous deployment in place. No WordPress plugin or `wp-config.php` change is required.
 
-   ```php
-   define('TTL_DEPLOY_HOOK_URL', 'https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/...');
-   ```
+1. In Cloudflare, open the Pages project, then **Settings → Builds → Deploy hooks**, and create a hook for the production branch. Treat the entire URL as a secret: anyone with it can trigger builds. If a hook URL has been exposed, delete that hook and create a new one.
+2. In GitHub, open this repository's **Settings → Secrets and variables → Actions**, add a repository secret named `CLOUDFLARE_PAGES_DEPLOY_HOOK_URL`, and paste the full hook URL as its value. Do not commit or share the URL.
+3. Push the workflow to the repository's default branch and ensure GitHub Actions is enabled. Scheduled workflows run only from the default branch. GitHub may disable scheduled workflows in inactive public repositories, so check the Actions tab if runs stop.
+4. In GitHub's **Actions** tab, choose **Rebuild WordPress content → Run workflow** and run it on the default branch. A successful workflow means Cloudflare accepted the request, not that the build succeeded. Check **Deployments** in Cloudflare for the build result, then verify the content on the deployed site.
 
-3. Add this as a must-use plugin (`wp-content/mu-plugins/ttl-deploy-hook.php`) or in a child theme's `functions.php`:
-
-   ```php
-   <?php
-   add_action('transition_post_status', function ($new, $old, $post) {
-       if ($post->post_type !== 'post' || ($new !== 'publish' && $old !== 'publish')) return;
-       if (!defined('TTL_DEPLOY_HOOK_URL') || get_transient('ttl_deploy_pending')) return;
-       // Debounce: batch edits made within one minute into a single build.
-       set_transient('ttl_deploy_pending', 1, 60);
-       wp_schedule_single_event(time() + 60, 'ttl_trigger_deploy');
-   }, 10, 3);
-
-   add_action('ttl_trigger_deploy', function () {
-       wp_remote_post(TTL_DEPLOY_HOOK_URL, ['timeout' => 10]);
-   });
-   ```
-
-   This fires on publish, update, unpublish and trash of posts. Scheduled events rely on WP-Cron, which runs when the site receives traffic.
-4. Publish or edit a test post and confirm a new deployment appears in the Pages project, then check the post on the site once it finishes.
+For immediate updates, run the workflow manually or start a deployment in Cloudflare. If the workflow fails, check its Actions log and confirm the secret contains the current hook URL. If the workflow succeeds but the deployment fails or content is stale, inspect the Cloudflare build logs and verify the WordPress API is accessible.
 
 ## Contact form setup
 
